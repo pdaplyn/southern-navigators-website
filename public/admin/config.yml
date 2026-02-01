@@ -1,6 +1,9 @@
 # Southern Navigators – Decap CMS
 # See CONTENT_CMS_SPEC.md for field definitions.
 
+# Required for GitHub backend: set to your live site URL (used for OAuth redirect)
+site_url: https://sensational-jelly-3596b2.netlify.app
+
 backend:
   name: github
   repo: pdaplyn/southern-navigators-website

@@ -76,15 +76,13 @@ Editors log in with **GitHub** and need push access to the repo. No Netlify Iden
    - GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
    - **Application name:** e.g. "Southern Navigators CMS".
    - **Homepage URL:** `https://yoursite.netlify.app` (your live Netlify URL).
-   - **Authorization callback URL:** `https://yoursite.netlify.app/admin/`.
+   - **Authorization callback URL:** use **`https://api.netlify.com/auth/done`** (Netlify’s OAuth endpoint; do *not* use your site’s `/admin/`).
    - Create the app and note the **Client ID**. Generate a **Client secret** and keep it safe.
 
-3. **Add the env vars in Netlify:**
-   - **Site configuration** → **Environment variables** → **Add a variable** (or **Options** → **Add a variable**).
-   - Add:
-     - `GITHUB_CLIENT_ID` = your OAuth app Client ID  
-     - `GITHUB_CLIENT_SECRET` = your OAuth app Client secret  
-   - Redeploy the site so the CMS picks them up.
+3. **Add the credentials in Netlify** (either method):
+   - **Option A – Environment variables:** **Site configuration** → **Environment variables** → add `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`, then redeploy.
+   - **Option B – OAuth UI (recommended):** **Site configuration** → **Access & security** → **OAuth** → **Install Provider** → **GitHub** → enter Client ID and Client secret, then save.
+   - Redeploy after adding env vars so the CMS picks them up.
 
 4. **Give editors access:** Add each committee member as a **collaborator** on the GitHub repo (Settings → Collaborators). They log in at **yoursite.netlify.app/admin/** with GitHub.
 
@@ -156,7 +154,7 @@ Until then, keep using the Netlify URL (e.g. `https://yoursite.netlify.app`) for
 |-------|----------------|
 | Build fails on Netlify | **Deploy log**: ensure Node version is ≥ 18. In Netlify **Site configuration** → **Environment** you can set **NODE_VERSION** = `20`. |
 | CMS shows "Failed to load config" | For **GitHub backend**: ensure `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are set in Netlify env vars and you've redeployed. For **DecapBridge**: check DecapBridge docs. |
-| "Log in with GitHub" does nothing / 404 | Open **/admin/** on the **deployed** site (not localhost). Ensure the GitHub OAuth app callback URL is exactly `https://yoursite.netlify.app/admin/`. |
+| "Log in with GitHub" does nothing / 404 | Open **/admin/** on the **deployed** site (not localhost). Ensure the GitHub OAuth app **Authorization callback URL** is `https://api.netlify.com/auth/done`. Add credentials under **Access & security → OAuth → Install Provider (GitHub)** if needed. |
 | 404 on /admin/ | The `public/admin/` folder is in the repo and published; clear cache or redeploy. |
 | Changes in CMS don’t appear | Wait 1–2 minutes for the rebuild, then refresh the site. Check **Deploys** in Netlify for errors. |
 

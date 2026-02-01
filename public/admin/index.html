@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Southern Navigators – CMS</title>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <link href="/admin/config.yml" type="text/yaml" rel="cms-config-url" />
+  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js"></script>
 </head>
 <body>
+  <p id="cms-loading">Loading CMS…</p>
+  <p id="cms-error" style="display: none; color: #c00;">The CMS did not load. Open the browser console (F12) and check for errors.</p>
+  <script>
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var loading = document.getElementById('cms-loading');
+        var error = document.getElementById('cms-error');
+        if (loading && !document.querySelector('[class^="cms-"]')) {
+          loading.style.display = 'none';
+          if (error) error.style.display = 'block';
+        }
+      }, 5000);
+    });
+  </script>
 </body>
 </html>
