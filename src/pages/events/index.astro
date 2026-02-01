@@ -1,0 +1,58 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('events');
+const future = all
+  .filter((e) => !e.data.draft && e.data.date >= new Date())
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const past = all
+  .filter((e) => !e.data.draft && e.data.date < new Date())
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Layout title="Events" description="Club events and calendar" hero={true} heroTitle="Events" heroTagline="Upcoming and past club events" heroImage="/images/header_events.jpg">
+  <section>
+    <h2>Upcoming events</h2>
+    {future.length > 0 ? (
+      <ul class="list-dated">
+        {future.map((event) => (
+          <li>
+            <a href={`/events/${event.slug}/`}>
+              <time datetime={event.data.date.toISOString().slice(0, 10)}>
+                {event.data.date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              </time>
+              {event.data.title}
+              {event.data.location ? ` — ${event.data.location}` : ''}
+              {event.data.level ? <span class="event-level">{event.data.level}</span> : null}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No upcoming events.</p>
+    )}
+  </section>
+
+  <section>
+    <h2>Past events</h2>
+    {past.length > 0 ? (
+      <ul class="list-dated">
+        {past.slice(0, 20).map((event) => (
+          <li>
+            <a href={`/events/${event.slug}/`}>
+              <time datetime={event.data.date.toISOString().slice(0, 10)}>
+                {event.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </time>
+              {event.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No past events listed.</p>
+    )}
+    {past.length > 20 ? <p>Older events are in the archive.</p> : null}
+  </section>
+
+  <p><a href="/calendar.ics" class="btn">Subscribe to calendar (iCal)</a></p>
+</Layout>

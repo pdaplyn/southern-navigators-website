@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allPages = (await getCollection('pages'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title, undefined, { sensitivity: 'base' }));
+
+/** Group key for nav: map parent slug to a short section label. */
+function sectionLabel(parent: string | undefined): string {
+  if (!parent) return 'Main';
+  const map: Record<string, string> = {
+    'sn': 'SN Juniors',
+    'sn-juniors': 'SN Juniors',
+    'new-to': 'New to Orienteering',
+    'club': 'Club',
+    'club-policies': 'Club Policies',
+    'leagues': 'Leagues & Series',
+    'leagues-series': 'Leagues & Series',
+    'roll-of-honour': 'Roll of Honour',
+    'permanent-orienteering-courses': 'Permanent Courses',
+    'contacts': 'Contacts',
+    'results': 'Results',
+  };
+  for (const [prefix, label] of Object.entries(map)) {
+    if (parent === prefix || parent.startsWith(prefix + '-')) return label;
+  }
+  return parent.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+const bySection = new Map<string, { title: string; slug: string }[]>();
+for (const page of allPages) {
+  const key = sectionLabel(page.data.parent);
+  if (!bySection.has(key)) bySection.set(key, []);
+  bySection.get(key)!.push({ title: page.data.title, slug: page.slug });
+}
+
+const sectionOrder = ['Main', 'New to Orienteering', 'About', 'Club', 'Club Policies', 'Membership', 'Contacts', 'SN Juniors', 'Leagues & Series', 'Roll of Honour', 'Permanent Courses', 'Results'];
+const sections = Array.from(bySection.entries()).sort(([a], [b]) => {
+  const i = sectionOrder.indexOf(a);
+  const j = sectionOrder.indexOf(b);
+  if (i !== -1 && j !== -1) return i - j;
+  if (i !== -1) return -1;
+  if (j !== -1) return 1;
+  return a.localeCompare(b);
+});
+---
+<Layout title="Information" description="Club information and pages" hero={true} heroTitle="Information" heroTagline="Club information and key pages">
+  <p class="info-intro">
+    All the information pages from the club site are listed below. Use the main menu for <a href="/about/">About</a>, <a href="/contacts/">Contacts</a>, and <a href="/photo-gallery/">Photo gallery</a>.
+  </p>
+
+  <nav class="info-index" aria-label="Information pages">
+    {sections.map(([sectionName, pages]) => (
+      <section class="info-section">
+        <h2 class="info-section-title">{sectionName}</h2>
+        <ul class="info-list">
+          {pages.map(({ title, slug }) => (
+            <li><a href={`/${slug}/`}>{title}</a></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </nav>
+</Layout>

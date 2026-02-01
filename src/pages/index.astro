@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const events = (await getCollection('events'))
+  .filter((e) => !e.data.draft && e.data.date >= new Date())
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+  .slice(0, 5);
+
+const news = (await getCollection('news'))
+  .filter((n) => !n.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+<Layout
+  title="Home"
+  description="Southern Navigators Orienteering Club – West Surrey, North East Hampshire & South East Berkshire"
+  hero={true}
+  heroTitle="Southern Navigators"
+  heroTagline="Orienteering in West Surrey, North East Hampshire & South East Berkshire"
+>
+  <div class="card-grid">
+    <section class="card">
+      <h2>Upcoming events</h2>
+      {events.length > 0 ? (
+        <>
+          <ul class="list-dated">
+            {events.map((event) => (
+              <li>
+                <a href={`/events/${event.slug}/`}>
+                  <time datetime={event.data.date.toISOString().slice(0, 10)}>
+                    {event.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </time>
+                  {event.data.title}
+                  {event.data.location ? ` — ${event.data.location}` : ''}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p style="margin-top: 1rem;"><a href="/events/" class="btn btn-accent">View all events</a></p>
+        </>
+      ) : (
+        <p>No upcoming events at the moment. Check back soon.</p>
+      )}
+    </section>
+
+    <section class="card">
+      <h2>Latest news</h2>
+      {news.length > 0 ? (
+        <>
+          <ul class="list-dated">
+            {news.map((item) => (
+              <li>
+                <a href={`/news/${item.slug}/`}>
+                  <time datetime={item.data.date.toISOString().slice(0, 10)}>
+                    {item.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </time>
+                  {item.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p style="margin-top: 1rem;"><a href="/news/" class="btn btn-secondary">View news &amp; archive</a></p>
+        </>
+      ) : (
+        <p>No news yet.</p>
+      )}
+    </section>
+  </div>
+
+  <div class="home-cta">
+    <p><a href="/new-to-orienteering/" class="btn btn-accent">New to orienteering?</a> <a href="/contacts/" class="btn btn-secondary">Contact the committee</a></p>
+  </div>
+</Layout>

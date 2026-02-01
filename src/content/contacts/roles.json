@@ -1,0 +1,20 @@
+{
+  "roles": [
+    { "name": "Chairman", "people": [{ "name": "Steve", "email": "chair@southernnavigators.com" }] },
+    { "name": "Treasurer", "people": [{ "name": "Paul", "email": "treasurer@southernnavigators.com" }] },
+    { "name": "Secretary", "people": [{ "name": "Helen", "email": "secretary@southernnavigators.com" }] },
+    { "name": "Events Secretary", "people": [{ "name": "Debbie", "email": "events@southernnavigators.com" }] },
+    { "name": "Team Captain", "people": [{ "name": "Paul", "email": "captain@southernnavigators.com" }] },
+    { "name": "Mapping Officer", "people": [{ "name": "Steve", "email": "mapping@southernnavigators.com" }] },
+    { "name": "Development Officer", "people": [{ "name": "Peter" }] },
+    { "name": "Equipment Officer", "people": [{ "name": "Michael" }] },
+    { "name": "Junior League Coordinator", "people": [{ "name": "Gill" }] },
+    { "name": "Membership Secretary & Club Kit", "people": [{ "name": "Gill", "email": "membership@southernnavigators.com" }] },
+    { "name": "Publicity Officer", "people": [{ "name": "Sarah", "email": "publicity@southernnavigators.com" }] },
+    { "name": "SNaggers Editor", "people": [{ "name": "Lucy" }] },
+    { "name": "SN League Rep", "people": [{ "name": "Jon" }] },
+    { "name": "Technical Adviser & Website Manager", "people": [{ "name": "Steve", "email": "website@southernnavigators.com" }] },
+    { "name": "Training Officer", "people": [{ "name": "Iain" }] },
+    { "name": "Welfare Officer", "people": [{ "name": "Ian" }] }
+  ]
+}

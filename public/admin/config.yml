@@ -1,0 +1,84 @@
+# Southern Navigators – Decap CMS
+# See CONTENT_CMS_SPEC.md for field definitions.
+
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images"
+public_folder: "/images"
+
+locale: "en"
+
+collections:
+  - name: "events"
+    label: "Events"
+    folder: "src/content/events"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: false
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Location", name: "location", widget: "string", required: false }
+      - { label: "Level", name: "level", widget: "select", options: ["Activity", "Course", "Local", "Regional", "National", "Major"], required: false }
+      - { label: "Event types", name: "eventTypes", widget: "list", required: false, field: { label: "Type", name: "type", widget: "select", options: ["Race", "Coaching", "Training", "Juniors", "Schools", "Relay", "Score", "Social", "Urban", "Night"] } }
+      - { label: "External URL", name: "externalUrl", widget: "string", required: false }
+      - { label: "Summary", name: "summary", widget: "text", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "news"
+    label: "News & Archive"
+    folder: "src/content/news"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: false
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Sub Title", name: "subTitle", widget: "string", required: false, hint: "Optional; use to keep the main title shorter." }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Categories", name: "categories", widget: "list", required: false, field: { label: "Category", name: "cat", widget: "string" } }
+      - { label: "Summary", name: "summary", widget: "text", required: false, hint: "30–40 words for homepage and entry detail." }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "pages"
+    label: "Info pages"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: false
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Parent", name: "parent", widget: "string", required: false }
+      - { label: "Order", name: "order", widget: "number", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "contacts"
+    label: "Contacts"
+    file: "src/content/contacts/roles.json"
+    description: "Committee and club contacts"
+    fields:
+      - label: "Roles"
+        name: "roles"
+        widget: "list"
+        fields:
+          - { label: "Role name", name: "name", widget: "string" }
+          - label: "People"
+            name: "people"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Email", name: "email", widget: "string", required: false }
+              - { label: "Phone", name: "phone", widget: "string", required: false }

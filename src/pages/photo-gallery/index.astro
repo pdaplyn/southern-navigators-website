@@ -1,0 +1,153 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { readdirSync, existsSync } from 'fs';
+import { join } from 'path';
+
+const IMAGES_BASE = join(process.cwd(), 'public', 'images');
+const IMAGE_EXT = /\.(jpg|jpeg|png|gif|webp)$/i;
+
+function listImageFiles(subdir: string): string[] {
+  const dir = join(IMAGES_BASE, subdir);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).filter((f) => IMAGE_EXT.test(f)).sort();
+}
+
+/** Turn filename like "peter-palmer-relays-1-1.jpg" or "contacts-2.jpg" into a short caption. */
+function filenameToCaption(filename: string, knownNames?: Record<string, string>): string {
+  const key = filename.replace(IMAGE_EXT, '');
+  if (knownNames && knownNames[key]) return knownNames[key];
+  const base = filename.replace(/-\d+\.(jpg|jpeg|png|gif|webp)$/i, '').replace(IMAGE_EXT, '');
+  return base.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+const committeeNames: Record<string, string> = {
+  'contacts-1': 'Steve',
+  'contacts-2': 'Paul',
+  'contacts-3': 'Debbie',
+  'contacts-4': 'Gill',
+  'contacts-5': 'Lucy',
+  'contacts-6': 'Jon',
+  'contacts-7': 'Ian',
+  'contacts-8': 'Michael',
+};
+
+const committeeFiles = listImageFiles('pages').filter((f) => /^contacts-\d+\./i.test(f));
+const committeePhotos = committeeFiles.map((f) => ({
+  id: f.replace(IMAGE_EXT, '').replace('contacts-', ''),
+  src: `/images/pages/${f}`,
+  caption: filenameToCaption(f, committeeNames),
+}));
+
+const newsFiles = listImageFiles('news');
+const newsPhotos = newsFiles.map((f) => ({
+  src: `/images/news/${f}`,
+  caption: filenameToCaption(f),
+}));
+
+const pageFiles = listImageFiles('pages').filter((f) => !/^contacts-\d+\./i.test(f));
+const pagePhotos = pageFiles.map((f) => ({
+  src: `/images/pages/${f}`,
+  caption: filenameToCaption(f),
+}));
+
+const eventFiles = listImageFiles('events');
+const eventPhotos = eventFiles.map((f) => ({
+  src: `/images/events/${f}`,
+  caption: filenameToCaption(f),
+}));
+---
+<Layout title="Photo gallery" description="All photos from the club site in one place" hero={true} heroTitle="Photo gallery" heroTagline="Photos from across the site">
+  <p class="photo-gallery-intro">
+    Photos scraped from news, info pages, and contacts—all in one place. Click any image to see it larger (browser). Committee names are shown where known.
+  </p>
+
+  {committeePhotos.length > 0 && (
+    <section class="photo-gallery-section" id="committee">
+      <h2 class="photo-gallery-heading">Committee &amp; helpers</h2>
+      <p class="photo-gallery-section-note">From the <a href="/contacts/">contacts</a> page.</p>
+      <ul class="photo-gallery-grid">
+        {committeePhotos.map(({ id, src, caption }) => (
+          <li id={id} class="photo-gallery-item">
+            <figure>
+              <img src={src} alt={caption} width="200" height="200" loading="lazy" />
+              <figcaption>{caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {newsPhotos.length > 0 && (
+    <section class="photo-gallery-section" id="news">
+      <h2 class="photo-gallery-heading">News &amp; archive</h2>
+      <p class="photo-gallery-section-note">Photos from <a href="/news/">news posts</a>.</p>
+      <ul class="photo-gallery-grid">
+        {newsPhotos.map(({ src, caption }) => (
+          <li class="photo-gallery-item">
+            <figure>
+              <a href={src} target="_blank" rel="noopener" title="Open full size">
+                <img src={src} alt={caption} width="200" height="200" loading="lazy" />
+              </a>
+              <figcaption>{caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {pagePhotos.length > 0 && (
+    <section class="photo-gallery-section" id="pages">
+      <h2 class="photo-gallery-heading">Info pages</h2>
+      <p class="photo-gallery-section-note">Photos from <a href="/info/">information pages</a> (about, new to orienteering, club clothing, juniors, etc.).</p>
+      <ul class="photo-gallery-grid">
+        {pagePhotos.map(({ src, caption }) => (
+          <li class="photo-gallery-item">
+            <figure>
+              <a href={src} target="_blank" rel="noopener" title="Open full size">
+                <img src={src} alt={caption} width="200" height="200" loading="lazy" />
+              </a>
+              <figcaption>{caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {eventPhotos.length > 0 && (
+    <section class="photo-gallery-section" id="events">
+      <h2 class="photo-gallery-heading">Events</h2>
+      <p class="photo-gallery-section-note">Photos from <a href="/events/">event</a> pages.</p>
+      <ul class="photo-gallery-grid">
+        {eventPhotos.map(({ src, caption }) => (
+          <li class="photo-gallery-item">
+            <figure>
+              <a href={src} target="_blank" rel="noopener" title="Open full size">
+                <img src={src} alt={caption} width="200" height="200" loading="lazy" />
+              </a>
+              <figcaption>{caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <nav class="photo-gallery-nav" aria-label="Gallery sections">
+    <p>
+      <strong>Jump to:</strong>
+      {[
+        committeePhotos.length > 0 && { href: '#committee', label: 'Committee' },
+        newsPhotos.length > 0 && { href: '#news', label: 'News & archive' },
+        pagePhotos.length > 0 && { href: '#pages', label: 'Info pages' },
+        eventPhotos.length > 0 && { href: '#events', label: 'Events' },
+      ].filter(Boolean).map((link, i) => (
+        <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+      ))}
+    </p>
+  </nav>
+
+  <p><a href="/contacts/" class="btn btn-secondary">← Back to contacts</a></p>
+</Layout>

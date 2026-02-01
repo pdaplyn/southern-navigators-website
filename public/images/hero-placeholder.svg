@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a5f3a"/>
+      <stop offset="40%" style="stop-color:#1a6b3a"/>
+      <stop offset="100%" style="stop-color:#0d4d28"/>
+    </linearGradient>
+    <linearGradient id="hill1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#0d4d28"/>
+      <stop offset="100%" style="stop-color:#1a6b3a"/>
+    </linearGradient>
+    <linearGradient id="hill2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a6b3a"/>
+      <stop offset="100%" style="stop-color:#2d8b4e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#sky)"/>
+  <!-- Distant hills -->
+  <path d="M0,400 L0,280 Q200,220 400,260 T800,240 T1200,280 L1200,400 Z" fill="url(#hill2)" opacity="0.9"/>
+  <path d="M0,400 L0,320 Q300,260 600,300 T1200,260 L1200,400 Z" fill="url(#hill1)"/>
+  <!-- Simple tree silhouettes -->
+  <path d="M120,400 L140,280 L160,400 Z M130,280 L130,200 L150,280 Z" fill="#0d4d28" opacity="0.85"/>
+  <path d="M980,400 L1000,260 L1020,400 Z M1000,260 L1000,160 L1020,260 Z" fill="#0d4d28" opacity="0.85"/>
+</svg>

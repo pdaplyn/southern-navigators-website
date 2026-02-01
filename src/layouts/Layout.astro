@@ -1,0 +1,73 @@
+---
+import { existsSync } from 'fs';
+import { join } from 'path';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Show hero band with optional background image (e.g. on home). */
+  hero?: boolean;
+  heroTitle?: string;
+  heroTagline?: string;
+  /** Override hero background image path (e.g. /images/header_events.jpg for Events page). */
+  heroImage?: string;
+}
+
+const { title, description = 'Southern Navigators Orienteering Club', hero = false, heroTitle, heroTagline, heroImage } = Astro.props;
+const headerImageExists = existsSync(join(process.cwd(), 'public', 'images', 'header.jpg'));
+const logoPngExists = existsSync(join(process.cwd(), 'public', 'logo.png'));
+const heroClass = hero && (heroImage || headerImageExists) ? 'hero-band has-image' : 'hero-band';
+const heroStyle = hero && heroImage ? { backgroundImage: `url('${heroImage}')` } : undefined;
+const logoSrc = logoPngExists ? 'logo.png' : 'logo.svg';
+const logoWidth = logoPngExists ? 100 : 220;
+const logoHeight = logoPngExists ? 48 : 48;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | Southern Navigators</title>
+    <link rel="stylesheet" href={import.meta.env.BASE_URL + 'styles/global.css'} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="/" class="logo-link" aria-label="Southern Navigators home">
+          <img src={import.meta.env.BASE_URL + logoSrc} alt="Southern Navigators" width={logoWidth} height={logoHeight} />
+        </a>
+        <nav class="main-nav" aria-label="Main">
+          <a href="/">Home</a>
+          <a href="/events/">Events</a>
+          <a href="/news/">News &amp; Archive</a>
+          <a href="/about/">About</a>
+          <a href="/info/">Info</a>
+          <a href="/contacts/">Contacts</a>
+        </nav>
+      </div>
+    </header>
+
+    {hero && (heroTitle || heroTagline) ? (
+      <div class={heroClass} style={heroStyle}>
+        <div class="hero-inner">
+          {heroTitle && <h1>{heroTitle}</h1>}
+          {heroTagline && <p class="tagline">{heroTagline}</p>}
+        </div>
+      </div>
+    ) : hero ? (
+      <div class={heroClass} style={heroStyle} role="presentation" aria-hidden="true" />
+    ) : null}
+
+    <main class="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>&copy; {new Date().getFullYear()} Southern Navigators Orienteering Club. West Surrey, North East Hampshire &amp; South East Berkshire.</p>
+      </div>
+    </footer>
+  </body>
+</html>

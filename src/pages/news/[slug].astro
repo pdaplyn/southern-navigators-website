@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+}
+
+const { item } = Astro.props;
+const { Content } = await item.render();
+---
+<Layout title={item.data.title} description={item.data.summary ?? item.data.title}>
+  <article>
+    <h1>{item.data.title}</h1>
+    {item.data.subTitle && <p class="subtitle">{item.data.subTitle}</p>}
+    <p>
+      <time datetime={item.data.date.toISOString().slice(0, 10)}>
+        {item.data.date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+      </time>
+    </p>
+    {item.data.summary && <p class="summary">{item.data.summary}</p>}
+    <Content />
+  </article>
+  <p><a href="/news/" class="btn btn-secondary">← Back to news</a></p>
+</Layout>

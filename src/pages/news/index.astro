@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const news = (await getCollection('news'))
+  .filter((n) => !n.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Layout title="News &amp; Archive" description="Club news and archive" hero={true} heroTitle="News &amp; Archive" heroTagline="Club news and archive">
+  {news.length > 0 ? (
+    <ul class="list-dated">
+      {news.map((item) => (
+        <li>
+          <a href={`/news/${item.slug}/`}>
+            <time datetime={item.data.date.toISOString().slice(0, 10)}>
+              {item.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </time>
+            {item.data.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No news yet.</p>
+  )}
+</Layout>

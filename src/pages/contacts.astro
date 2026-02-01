@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+
+const entry = await getEntry('contacts', 'roles');
+const allRoles = entry?.data.roles ?? [];
+const electedTitles = ['Chairman', 'Treasurer', 'Secretary', 'Events Secretary', 'Team Captain', 'Mapping Officer', 'Development Officer'];
+const elected = allRoles.filter((r) => electedTitles.includes(r.name));
+const coopted = allRoles.filter((r) => !electedTitles.includes(r.name));
+---
+<Layout title="Contacts" description="Committee and club contacts" hero={true} heroTitle="Contacts" heroTagline="Committee and club contacts">
+  <p class="contact-intro">
+    Below are the current committee members. To email members of the committee append <strong>@southernnavigators.com</strong> to the address shown (e.g. chair → <a href="mailto:chair@southernnavigators.com">chair@southernnavigators.com</a>).
+  </p>
+
+  {elected.length > 0 && (
+    <section class="contact-section">
+      <h2 class="contact-section-title">Elected posts</h2>
+      <dl class="contact-list">
+        {elected.map((role) => (
+          <>
+            <dt>{role.name}</dt>
+            {role.people.map((person) => (
+              <dd>
+                <strong>{person.name}</strong>
+                {person.email ? <> · <a href={`mailto:${person.email}`}>{person.email}</a></> : null}
+                {person.phone ? <> · {person.phone}</> : null}
+              </dd>
+            ))}
+          </>
+        ))}
+      </dl>
+    </section>
+  )}
+
+  {coopted.length > 0 && (
+    <section class="contact-section">
+      <h2 class="contact-section-title">Co-opted posts</h2>
+      <dl class="contact-list">
+        {coopted.map((role) => (
+          <>
+            <dt>{role.name}</dt>
+            {role.people.map((person) => (
+              <dd>
+                <strong>{person.name}</strong>
+                {person.email ? <> · <a href={`mailto:${person.email}`}>{person.email}</a></> : null}
+                {person.phone ? <> · {person.phone}</> : null}
+              </dd>
+            ))}
+          </>
+        ))}
+      </dl>
+    </section>
+  )}
+
+  <section class="contact-section contact-gallery">
+    <h2 class="contact-section-title">Photo gallery</h2>
+    <p class="contact-gallery-intro">Committee and helpers. <a href="/photo-gallery/">View full photo gallery</a>.</p>
+    <ul class="contact-gallery-grid">
+      <li><a href="/photo-gallery/#steve"><img src="/images/pages/contacts-1.png" alt="Steve" width="120" height="120" loading="lazy" /><span>Steve</span></a></li>
+      <li><a href="/photo-gallery/#paul"><img src="/images/pages/contacts-2.jpg" alt="Paul" width="120" height="120" loading="lazy" /><span>Paul</span></a></li>
+      <li><a href="/photo-gallery/#debbie"><img src="/images/pages/contacts-3.jpg" alt="Debbie" width="120" height="120" loading="lazy" /><span>Debbie</span></a></li>
+      <li><a href="/photo-gallery/#gill"><img src="/images/pages/contacts-4.jpg" alt="Gill" width="120" height="120" loading="lazy" /><span>Gill</span></a></li>
+      <li><a href="/photo-gallery/#lucy"><img src="/images/pages/contacts-5.jpg" alt="Lucy" width="120" height="120" loading="lazy" /><span>Lucy</span></a></li>
+      <li><a href="/photo-gallery/#jon"><img src="/images/pages/contacts-6.jpg" alt="Jon" width="120" height="120" loading="lazy" /><span>Jon</span></a></li>
+      <li><a href="/photo-gallery/#ian"><img src="/images/pages/contacts-7.jpg" alt="Ian" width="120" height="120" loading="lazy" /><span>Ian</span></a></li>
+      <li><a href="/photo-gallery/#michael"><img src="/images/pages/contacts-8.jpg" alt="Michael" width="120" height="120" loading="lazy" /><span>Michael</span></a></li>
+    </ul>
+  </section>
+
+  <section class="contact-related">
+    <h2 class="contact-section-title">Related</h2>
+    <ul>
+      <li><a href="/photo-gallery/">Photo gallery</a></li>
+      <li><a href="/contacts-coaches/">Club Coaches</a></li>
+      <li><a href="/contacts-event-controllers/">Club Controllers</a></li>
+    </ul>
+  </section>
+</Layout>
