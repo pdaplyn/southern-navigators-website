@@ -71,18 +71,21 @@ collections:
 
   - name: "contacts"
     label: "Contacts"
-    file: "src/content/contacts/roles.json"
     description: "Committee and club contacts"
-    fields:
-      - label: "Roles"
+    files:
+      - label: "Committee and club contacts"
         name: "roles"
-        widget: "list"
+        file: "src/content/contacts/roles.json"
         fields:
-          - { label: "Role name", name: "name", widget: "string" }
-          - label: "People"
-            name: "people"
+          - label: "Roles"
+            name: "roles"
             widget: "list"
             fields:
-              - { label: "Name", name: "name", widget: "string" }
-              - { label: "Email", name: "email", widget: "string", required: false }
-              - { label: "Phone", name: "phone", widget: "string", required: false }
+              - { label: "Role name", name: "name", widget: "string" }
+              - label: "People"
+                name: "people"
+                widget: "list"
+                fields:
+                  - { label: "Name", name: "name", widget: "string" }
+                  - { label: "Email", name: "email", widget: "string", required: false }
+                  - { label: "Phone", name: "phone", widget: "string", required: false }
