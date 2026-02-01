@@ -2,7 +2,8 @@
 # See CONTENT_CMS_SPEC.md for field definitions.
 
 backend:
-  name: git-gateway
+  name: github
+  repo: pdaplyn/southern-navigators-website
   branch: main
 
 media_folder: "public/images"

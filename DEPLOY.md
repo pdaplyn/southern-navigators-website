@@ -57,23 +57,48 @@ This guide gets the site and CMS live so you can share a link with the committee
 
 ---
 
-## Step 3: Enable the CMS (Netlify Identity + Git Gateway)
+## Step 3: Enable the CMS (authentication)
 
-Decap CMS is configured with **git-gateway**, so Netlify Identity must be on.
+**Netlify Identity is deprecated** (as of February 2025). Netlify now recommends **Auth0** for authentication. **This project uses Option A (GitHub backend)** below.
 
-1. In Netlify: **Site overview** → **Site configuration** (or **Site settings**).
-2. Go to **Identity** in the left sidebar.
-3. Click **Enable Identity**.
-4. Under **Registration preferences**, set **Allow external registrations** to **Invite only** (so only people you invite can log in).
-5. Go to **Services** → **Git Gateway** and click **Enable Git Gateway** (one click).  
-   This lets the CMS read/write content in your repo on your behalf.
+---
 
-6. **Invite committee members:**
-   - **Identity** → **Invite users**.
-   - Enter their email addresses and send invites.  
-   They’ll get an email to set a password; after that they can log in at **yoursite.netlify.app/admin/**.
+### Option A: GitHub backend (recommended – use this)
 
-7. **Optional:** In **Identity** → **Settings and usage** you can set a **Site name** (e.g. “Southern Navigators CMS”) so the login screen is clearer.
+Editors log in with **GitHub** and need push access to the repo. No Netlify Identity, no Auth0, no extra services.
+
+1. **Use the GitHub backend** – The repo is already set up for this. In `public/admin/config.yml` the backend is:
+   - `name: github`
+   - `repo: pdaplyn/southern-navigators-website` (or your `owner/repo`)
+   Do **not** enable Netlify Identity or Git Gateway.
+
+2. **Register the app with GitHub** (one-time):
+   - GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
+   - **Application name:** e.g. "Southern Navigators CMS".
+   - **Homepage URL:** `https://yoursite.netlify.app` (your live Netlify URL).
+   - **Authorization callback URL:** `https://yoursite.netlify.app/admin/`.
+   - Create the app and note the **Client ID**. Generate a **Client secret** and keep it safe.
+
+3. **Add the env vars in Netlify:**
+   - **Site configuration** → **Environment variables** → **Add a variable** (or **Options** → **Add a variable**).
+   - Add:
+     - `GITHUB_CLIENT_ID` = your OAuth app Client ID  
+     - `GITHUB_CLIENT_SECRET` = your OAuth app Client secret  
+   - Redeploy the site so the CMS picks them up.
+
+4. **Give editors access:** Add each committee member as a **collaborator** on the GitHub repo (Settings → Collaborators). They log in at **yoursite.netlify.app/admin/** with GitHub.
+
+---
+
+### Option B: Auth0 (as Netlify suggests)
+
+Netlify recommends **Install Auth0** instead of the deprecated "Enable Identity". Auth0 protects your site or routes; for Decap CMS you still need a way for the CMS to write to GitHub:
+
+- **Option B1 – DecapBridge:** Use [DecapBridge](https://decapbridge.com/) as the auth layer for Decap CMS. You invite editors by email (they can use Google, Microsoft, or a password). No GitHub account required for editors. See [DecapBridge docs](https://decapbridge.com/docs/getting-started).
+- **Option B2 – Auth0 + GitHub:** Use the [Auth0 extension for Netlify](https://docs.netlify.com/integrations/auth0/) for site auth; the CMS would need to be configured with the GitHub backend and your Auth0 setup would control who can reach `/admin/`. This is more involved; Option A or DecapBridge is usually simpler for a committee CMS.
+
+**Summary:** Prefer **Option A** if your editors can have GitHub accounts and repo access. Use **DecapBridge** (Option B1) if you want email invites and no GitHub for editors.
+
 
 ---
 
@@ -91,7 +116,8 @@ Send them:
 
 3. **CMS guide**  
    Point them to **COMMITTEE_CMS_GUIDE.md** (or a copy of it / a short note):  
-   - Log in with the email they were invited with and the password they set.  
+   - **GitHub backend:** Log in with GitHub (they need collaborator access to the repo).  
+   - **DecapBridge:** Log in with the email they were invited to and the password or social login they set.  
    - Use **Events**, **News & Archive**, **Info pages**, **Contacts** in the left menu.
 
 ---
@@ -129,8 +155,8 @@ Until then, keep using the Netlify URL (e.g. `https://yoursite.netlify.app`) for
 | Issue | What to check |
 |-------|----------------|
 | Build fails on Netlify | **Deploy log**: ensure Node version is ≥ 18. In Netlify **Site configuration** → **Environment** you can set **NODE_VERSION** = `20`. |
-| CMS shows “Failed to load config” | Ensure **Git Gateway** is enabled under **Identity** → **Services**. |
-| “Log in with Netlify Identity” does nothing | Ensure **Identity** is enabled and that you’ve opened **/admin/** on the **deployed** site (not localhost). |
+| CMS shows "Failed to load config" | For **GitHub backend**: ensure `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are set in Netlify env vars and you've redeployed. For **DecapBridge**: check DecapBridge docs. |
+| "Log in with GitHub" does nothing / 404 | Open **/admin/** on the **deployed** site (not localhost). Ensure the GitHub OAuth app callback URL is exactly `https://yoursite.netlify.app/admin/`. |
 | 404 on /admin/ | The `public/admin/` folder is in the repo and published; clear cache or redeploy. |
 | Changes in CMS don’t appear | Wait 1–2 minutes for the rebuild, then refresh the site. Check **Deploys** in Netlify for errors. |
 
@@ -140,7 +166,7 @@ Until then, keep using the Netlify URL (e.g. `https://yoursite.netlify.app`) for
 
 1. Push repo to **GitHub**.
 2. **Netlify** → Import project → build command `npm run build`, publish `dist`.
-3. Enable **Identity** and **Git Gateway**; invite users.
+3. Set up CMS auth: **GitHub backend** (recommended) or **Auth0 / DecapBridge**; give editors access (repo collaborators or DecapBridge invites).
 4. Share **site URL** and **/admin/** with the committee; point them to **COMMITTEE_CMS_GUIDE.md**.
 
 After that, the committee can browse the preview and try editing content in the CMS without touching code or Git.
